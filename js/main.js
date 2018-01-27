@@ -19,6 +19,8 @@ let ship
 let spaceBottom
 let spaceTop
 let shipLoaded = false
+let owens = []
+let level = 1
 
 const light = new THREE.PointLight(0xffffff, 1)
 light.position.set(-10, 0, 2)
@@ -73,8 +75,36 @@ const render = () => {
   spaceBottom.rotation.y -= 0.03
   spaceTop.rotation.y += 0.03
   camera.position.set(ship.position.x - 5, ship.position.y, ship.position.z + 0.1)
+  if (owens.length < 30 && Math.random() < level / 100) {
+    addOwen()
+  }
+
   moveShip()
+
+  owens.forEach((owen, index) => {
+    if (owen.position.z < 0) owen.position.z += 0.2
+    owen.position.x -= 0.1
+    if (owen.position.x < -7) {
+      scene.remove(owen)
+      owens.splice(index, 1);
+    }
+  })
   renderer.render(scene, camera)
+}
+
+const addOwen = () => {
+  let texture = THREE.ImageUtils.loadTexture('owen.png')
+  let owenMaterial = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true
+  })
+  let plane = new THREE.PlaneGeometry(1, 1, 1)
+  let owen = new THREE.Mesh(plane, owenMaterial)
+  owen.position.set(100, -6.5 + Math.random() * 13, -10)
+  owen.rotation.y = Math.PI / -2
+  owen.rotation.x = Math.PI / 2
+  owens.push(owen)
+  scene.add(owen)
 }
 
 const moveShip = () => {
