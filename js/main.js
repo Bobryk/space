@@ -12,15 +12,9 @@ window.onresize = event => {
   camera.updateProjectionMatrix()
 }
 
-let material
-let geometry
-let object
-let ship
-let spaceBottom
-let spaceTop
+let material, geometry, object, ship, spaceBottom, spaceTop
 let shipLoaded = false
 let owens = []
-let level = 1
 let laser = document.getElementById("sound")
 let wow = document.getElementById("wow")
 
@@ -29,9 +23,6 @@ light.position.set(-10, 0, 2)
 
 scene.add(light)
 
-// controls
-
-// Keyboard Controls
 const keyboard = {
   w: false,
   a: false,
@@ -43,33 +34,15 @@ const keyboard = {
 const keyEvent = event => {
   isPressed = event.type === "keydown"
   switch (event.code) {
-    case "KeyW":
-      keyboard.w = isPressed
-      break
-    case "KeyA":
-      keyboard.a = isPressed
-      break
-    case "KeyS":
-      keyboard.s = isPressed
-      break
-    case "KeyD":
-      keyboard.d = isPressed
-      break
-    case "ArrowUp":
-      keyboard.w = isPressed
-      break
-    case "ArrowLeft":
-      keyboard.a = isPressed
-      break
-    case "ArrowDown":
-      keyboard.s = isPressed
-      break
-    case "ArrowRight":
-      keyboard.d = isPressed
-      break
-    case "Space":
-      keyboard.space = isPressed
-      break
+    case "KeyW": keyboard.w = isPressed; break
+    case "KeyA": keyboard.a = isPressed; break
+    case "KeyS": keyboard.s = isPressed; break
+    case "KeyD": keyboard.d = isPressed; break
+    case "ArrowUp": keyboard.w = isPressed; break
+    case "ArrowLeft": keyboard.a = isPressed; break
+    case "ArrowDown": keyboard.s = isPressed; break
+    case "ArrowRight": keyboard.d = isPressed; break
+    case "Space": keyboard.space = isPressed
   }
 }
 
@@ -78,42 +51,46 @@ this.addEventListener("keyup", keyEvent)
 
 const render = () => {
   requestAnimationFrame(render)
-  spaceBottom.rotation.y -= 0.03
-  spaceTop.rotation.y += 0.03
-  if (owens.length < 30 && Math.random() < level / 100) {
+  moveSpace()
+
+  if (owens.length < 30 && Math.random() < 0.01) {
     addOwen()
   }
 
-  if(keyboard.space && (laser.ended || laser.currentTime == 0)) {
+  if (keyboard.space && (laser.ended || laser.currentTime == 0)) {
     laser.play()
     killOwens()
   }
 
   moveShip()
+  moveOwens()
 
-  camera.position.set(ship.position.x - 5, ship.position.y, ship.position.z + 0.1)
+  renderer.render(scene, camera)
+}
 
+const moveSpace = () => {
+  spaceBottom.rotation.y -= 0.03
+  spaceTop.rotation.y += 0.03
+}
+
+const moveOwens = () => {
   owens.forEach((owen, index) => {
     if (owen.position.z < 0) owen.position.z += 0.2
-
     owen.position.x -= 0.3
-
-    if (owen.position.x < -10) {
-      window.location.href = "./end.html"
-    }
+    if (owen.position.x < -10) window.location.href = "./end.html"
   })
-  renderer.render(scene, camera)
 }
 
 const killOwens = () => {
   let killed = false
   owens.forEach((owen, index) => {
-    if(Math.abs(ship.position.y - owen.position.y) < .35) {
+    if (Math.abs(ship.position.y - owen.position.y) < .35) {
       owens.splice(index, 1);
       scene.remove(owen)
       killed = true
     }
   })
+
   if (killed) {
     wow.pause()
     wow.currentTime = 0
@@ -129,7 +106,7 @@ const addOwen = () => {
   })
   let plane = new THREE.PlaneGeometry(0.5, 0.5, 1)
   let owen = new THREE.Mesh(plane, owenMaterial)
-  owen.position.set(100, -6.5 + Math.random() * 13, -10)
+  owen.position.set(60, -6.5 + Math.random() * 13, -10)
   owen.rotation.y = Math.PI / -2
   owen.rotation.x = Math.PI / 2
   owens.push(owen)
@@ -138,18 +115,14 @@ const addOwen = () => {
 
 const moveShip = () => {
   let notMoving = (keyboard.a && keyboard.d) || (!keyboard.a && !keyboard.d)
-  if (keyboard.a) {
-    ship.position.y += 0.1
-    ship.rotation.x -= 0.1
-  }
 
-  if (keyboard.d) {
-    ship.position.y -= 0.1
-    ship.rotation.x += 0.1
-  }
+  if (!notMoving) {
+    ship.position.y += keyboard.a ? 0.1 : -0.1
 
-  if (ship.rotation.x > 0.7) ship.rotation.x = 0.7
-  if (ship.rotation.x < -0.7) ship.rotation.x = -0.7
+    if (Math.abs(ship.rotation.x) <= 0.6) {
+      ship.rotation.x -= keyboard.a ? 0.1 : -0.1
+    }
+  }
 
   ship.rotation.x = Math.round(ship.rotation.x * 10) / 10.0
 
@@ -159,6 +132,8 @@ const moveShip = () => {
 
   if (ship.position.y > 7) ship.position.y = 7
   if (ship.position.y < -7) ship.position.y = -7
+
+  camera.position.set(ship.position.x - 5, ship.position.y, ship.position.z + 0.1)
 }
 
 const wait = () => {
