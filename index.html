@@ -7,7 +7,25 @@
 		<link rel="stylesheet" href="styles.css" type="text/css" />
 	</head>
 	<body>
-		<script src="js/three.min.js"></script>
-		<script src="js/main.js"></script>
+    <script>
+    let index = 0
+    const transmission = "There are Owen Bots closing in on your location. Do not let any Owen Bots reach the planet."
+    const receiveTransmission = () => {
+      let button = document.getElementById("but")
+      button.style.display = "none"
+      let p = document.getElementById("transmission")
+      if (index < transmission.length) {
+        p.innerHTML += transmission[index]
+        index++
+      } else {
+        document.getElementById("accept").style.display = "block"
+        clearInterval(receiveTransmission, 50)
+      }
+    }
+    </script>
+    <h1>Incoming Transmission</h1>
+    <button id="but" onclick="setInterval(receiveTransmission, 10)">Read Transmission</button>
+    <p id="transmission"></p>
+    <button id="accept" style="display: none"><a href="./game.html">Kill All Owen Bots</a></button>
 	</body>
 </html>

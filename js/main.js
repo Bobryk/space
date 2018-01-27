@@ -21,6 +21,8 @@ let spaceTop
 let shipLoaded = false
 let owens = []
 let level = 1
+let laser = document.getElementById("sound")
+let wow = document.getElementById("wow")
 
 const light = new THREE.PointLight(0xffffff, 1)
 light.position.set(-10, 0, 2)
@@ -34,7 +36,8 @@ const keyboard = {
   w: false,
   a: false,
   s: false,
-  d: false
+  d: false,
+  space: false
 }
 
 const keyEvent = event => {
@@ -52,18 +55,21 @@ const keyEvent = event => {
     case "KeyD":
       keyboard.d = isPressed
       break
-      case "ArrowUp":
-        keyboard.w = isPressed
-        break
-      case "ArrowLeft":
-        keyboard.a = isPressed
-        break
-      case "ArrowDown":
-        keyboard.s = isPressed
-        break
-      case "ArrowRight":
-        keyboard.d = isPressed
-        break
+    case "ArrowUp":
+      keyboard.w = isPressed
+      break
+    case "ArrowLeft":
+      keyboard.a = isPressed
+      break
+    case "ArrowDown":
+      keyboard.s = isPressed
+      break
+    case "ArrowRight":
+      keyboard.d = isPressed
+      break
+    case "Space":
+      keyboard.space = isPressed
+      break
   }
 }
 
@@ -75,24 +81,44 @@ const render = () => {
   spaceBottom.rotation.y -= 0.03
   spaceTop.rotation.y += 0.03
   if (owens.length < 30 && Math.random() < level / 100) {
-    //addOwen()
+    addOwen()
+  }
+
+  if(keyboard.space && (laser.ended || laser.currentTime == 0)) {
+    laser.play()
+    killOwens()
   }
 
   moveShip()
+
   camera.position.set(ship.position.x - 5, ship.position.y, ship.position.z + 0.1)
 
   owens.forEach((owen, index) => {
     if (owen.position.z < 0) owen.position.z += 0.2
-    owen.position.x -= 0.1
-    if (owen.position.x < -6) {
-      owen.position.z -= 0.2
-    }
+
+    owen.position.x -= 0.3
+
     if (owen.position.x < -10) {
-      scene.remove(owen)
-      owens.splice(index, 1);
+      window.location.href = "./end.html"
     }
   })
   renderer.render(scene, camera)
+}
+
+const killOwens = () => {
+  let killed = false
+  owens.forEach((owen, index) => {
+    if(Math.abs(ship.position.y - owen.position.y) < .35) {
+      owens.splice(index, 1);
+      scene.remove(owen)
+      killed = true
+    }
+  })
+  if (killed) {
+    wow.pause()
+    wow.currentTime = 0
+    wow.play()
+  }
 }
 
 const addOwen = () => {
