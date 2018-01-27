@@ -60,7 +60,31 @@ const render = () => {
 
   camera.position.set(ship.position.x, ship.position.y, ship.position.z + 10)
   camera.lookAt(ship.position)
+  moveShip()
   renderer.render(scene, camera)
+}
+
+const moveShip = () => {
+  ship.rotation.set(0, 0, 0)
+  if (keyboard.w) {
+    ship.position.y += 0.1
+    ship.rotation.x -= 0.7
+  }
+
+  if (keyboard.s) {
+    ship.position.y -= 0.1
+    ship.rotation.x += 0.7
+  }
+
+  if (keyboard.a) {
+    ship.position.x -= 0.1
+  }
+
+  if (keyboard.d) {
+    ship.position.x += 0.1
+  }
+  if (ship.position.y > 7) ship.position.y = 7
+  if (ship.position.y < -7) ship.position.y = -7
 }
 
 const wait = () => {
