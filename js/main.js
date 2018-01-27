@@ -74,17 +74,20 @@ const render = () => {
   requestAnimationFrame(render)
   spaceBottom.rotation.y -= 0.03
   spaceTop.rotation.y += 0.03
-  camera.position.set(ship.position.x - 5, ship.position.y, ship.position.z + 0.1)
   if (owens.length < 30 && Math.random() < level / 100) {
-    addOwen()
+    //addOwen()
   }
 
   moveShip()
+  camera.position.set(ship.position.x - 5, ship.position.y, ship.position.z + 0.1)
 
   owens.forEach((owen, index) => {
     if (owen.position.z < 0) owen.position.z += 0.2
     owen.position.x -= 0.1
-    if (owen.position.x < -7) {
+    if (owen.position.x < -6) {
+      owen.position.z -= 0.2
+    }
+    if (owen.position.x < -10) {
       scene.remove(owen)
       owens.splice(index, 1);
     }
@@ -98,7 +101,7 @@ const addOwen = () => {
     map: texture,
     transparent: true
   })
-  let plane = new THREE.PlaneGeometry(1, 1, 1)
+  let plane = new THREE.PlaneGeometry(0.5, 0.5, 1)
   let owen = new THREE.Mesh(plane, owenMaterial)
   owen.position.set(100, -6.5 + Math.random() * 13, -10)
   owen.rotation.y = Math.PI / -2
@@ -108,16 +111,26 @@ const addOwen = () => {
 }
 
 const moveShip = () => {
-  ship.rotation.set(0, 0, 0)
+  let notMoving = (keyboard.a && keyboard.d) || (!keyboard.a && !keyboard.d)
   if (keyboard.a) {
     ship.position.y += 0.1
-    ship.rotation.x -= 0.7
+    ship.rotation.x -= 0.1
   }
 
   if (keyboard.d) {
     ship.position.y -= 0.1
-    ship.rotation.x += 0.7
+    ship.rotation.x += 0.1
   }
+
+  if (ship.rotation.x > 0.7) ship.rotation.x = 0.7
+  if (ship.rotation.x < -0.7) ship.rotation.x = -0.7
+
+  ship.rotation.x = Math.round(ship.rotation.x * 10) / 10.0
+
+  if (notMoving && ship.rotation.x != 0) {
+    ship.rotation.x += ship.rotation.x > 0 ? -0.1 : 0.1
+  }
+
   if (ship.position.y > 7) ship.position.y = 7
   if (ship.position.y < -7) ship.position.y = -7
 }
