@@ -21,23 +21,21 @@ light.position.set(0, 5, 2)
 
 scene.add(light)
 
-camera.position.set(0,5,10)
+camera.position.set(0,-10,10)
 camera.lookAt(scene.position)
 
 const render = () => {
   requestAnimationFrame(render)
-  object.rotation.x += 0.002
-  object.rotation.y += 0.002
   renderer.render(scene, camera)
 }
 
 const init = () => {
 
-  material = new THREE.MeshPhongMaterial({
-    shininess: 50
+  material = new THREE.MeshLambertMaterial({
+    shading: THREE.FlatShading
   })
 
-  geometry = new THREE.IcosahedronGeometry( 2 )
+  geometry = new THREE.PlaneGeometry( 5, 5, 32 );
 
   object = new THREE.Mesh(geometry, material)
   scene.add(object)
