@@ -84,8 +84,8 @@ const moveOwens = () => {
 const killOwens = () => {
   let killed = false
   owens.forEach((owen, index) => {
-    if (Math.abs(ship.position.y - owen.position.y) < .35) {
-      owens.splice(index, 1);
+    if (!killed && Math.abs(ship.position.y - owen.position.y) < .5) {
+      owens.splice(index, 1)
       scene.remove(owen)
       killed = true
     }
@@ -106,7 +106,7 @@ const addOwen = () => {
   })
   let plane = new THREE.PlaneGeometry(0.5, 0.5, 1)
   let owen = new THREE.Mesh(plane, owenMaterial)
-  owen.position.set(60, -6.5 + Math.random() * 13, -10)
+  owen.position.set(60, -4 + Math.random() * 8, -10)
   owen.rotation.y = Math.PI / -2
   owen.rotation.x = Math.PI / 2
   owens.push(owen)
