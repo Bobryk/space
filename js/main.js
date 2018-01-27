@@ -59,6 +59,7 @@ const render = () => {
   }
 
   if (keyboard.space && (laser.ended || laser.currentTime == 0)) {
+    laser.volume = 0.7
     laser.play()
     killOwens()
   }
@@ -175,6 +176,7 @@ const init = () => {
   spaceTop.position.set(0, 0, 10.5)
   scene.add(spaceTop)
   music.loop = true
+  music.volume = 0.7
   music.play()
 }
 
