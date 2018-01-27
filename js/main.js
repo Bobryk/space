@@ -17,6 +17,7 @@ let shipLoaded = false
 let owens = []
 let laser = document.getElementById("sound")
 let wow = document.getElementById("wow")
+let music = document.getElementById("music")
 
 const light = new THREE.PointLight(0xffffff, 1)
 light.position.set(-10, 0, 2)
@@ -173,6 +174,8 @@ const init = () => {
   spaceTop = new THREE.Mesh(plane, spaceMaterial)
   spaceTop.position.set(0, 0, 10.5)
   scene.add(spaceTop)
+  music.loop = true
+  music.play()
 }
 
 init()
