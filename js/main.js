@@ -15,14 +15,32 @@ window.onresize = event => {
 let material
 let geometry
 let object
+let ship
 
 const light = new THREE.PointLight(0xffffff, 1)
-light.position.set(0, 5, 2)
+light.position.set(0, 0, 5)
 
 scene.add(light)
 
-camera.position.set(0,-10,10)
+camera.position.set(0, -10, 10)
 camera.lookAt(scene.position)
+
+material = new THREE.MeshLambertMaterial({
+  color: 0xffffff,
+  side: THREE.DoubleSide
+})
+
+const loader = new THREE.ObjectLoader()
+
+loader.load( "./js/SpaceShip.json", object => {
+  console.log(object)
+  let geometry = object.children[0].geometry
+  geometry.computeFaceNormals()
+  geometry.computeVertexNormals()
+  ship = new THREE.Mesh( geometry, material)
+  ship.scale.set( .1, .1, .1 )
+  scene.add(ship)
+} )
 
 const render = () => {
   requestAnimationFrame(render)
@@ -30,11 +48,6 @@ const render = () => {
 }
 
 const init = () => {
-
-  material = new THREE.MeshLambertMaterial({
-    shading: THREE.FlatShading
-  })
-
   geometry = new THREE.PlaneGeometry( 5, 5, 32 );
 
   object = new THREE.Mesh(geometry, material)
