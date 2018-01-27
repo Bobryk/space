@@ -77,11 +77,11 @@ const moveShip = () => {
   }
 
   if (keyboard.a) {
-    ship.position.x -= 0.1
+    space.rotation.y += 0.01
   }
 
   if (keyboard.d) {
-    ship.position.x += 0.1
+    space.rotation.y -= 0.01
   }
   if (ship.position.y > 7) ship.position.y = 7
   if (ship.position.y < -7) ship.position.y = -7
@@ -110,10 +110,13 @@ const init = () => {
   } )
 
   texture = THREE.ImageUtils.loadTexture('space.png')
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.RepeatWrapping
+  texture.repeat.set( 4, 4 )
   let spaceMaterial = new THREE.MeshBasicMaterial({map: texture})
-  let plane = new THREE.PlaneGeometry(20, 20)
+  let plane = new THREE.CylinderGeometry(10, 10, 40, 64, 1)
   space = new THREE.Mesh(plane, spaceMaterial)
-  space.position.set(0, 0, -1)
+  space.position.set(0, 0, -11)
   scene.add(space)
 }
 
