@@ -16,11 +16,12 @@ let material
 let geometry
 let object
 let ship
-let space
+let spaceBottom
+let spaceTop
 let shipLoaded = false
 
 const light = new THREE.PointLight(0xffffff, 1)
-light.position.set(0, 0, 5)
+light.position.set(-10, 0, 2)
 
 scene.add(light)
 
@@ -49,6 +50,18 @@ const keyEvent = event => {
     case "KeyD":
       keyboard.d = isPressed
       break
+      case "ArrowUp":
+        keyboard.w = isPressed
+        break
+      case "ArrowLeft":
+        keyboard.a = isPressed
+        break
+      case "ArrowDown":
+        keyboard.s = isPressed
+        break
+      case "ArrowRight":
+        keyboard.d = isPressed
+        break
   }
 }
 
@@ -57,31 +70,23 @@ this.addEventListener("keyup", keyEvent)
 
 const render = () => {
   requestAnimationFrame(render)
-
-  camera.position.set(ship.position.x, ship.position.y, ship.position.z + 10)
-  camera.lookAt(ship.position)
+  spaceBottom.rotation.y -= 0.03
+  spaceTop.rotation.y += 0.03
+  camera.position.set(ship.position.x - 5, ship.position.y, ship.position.z + 0.1)
   moveShip()
   renderer.render(scene, camera)
 }
 
 const moveShip = () => {
   ship.rotation.set(0, 0, 0)
-  if (keyboard.w) {
+  if (keyboard.a) {
     ship.position.y += 0.1
     ship.rotation.x -= 0.7
   }
 
-  if (keyboard.s) {
+  if (keyboard.d) {
     ship.position.y -= 0.1
     ship.rotation.x += 0.7
-  }
-
-  if (keyboard.a) {
-    space.rotation.y += 0.01
-  }
-
-  if (keyboard.d) {
-    space.rotation.y -= 0.01
   }
   if (ship.position.y > 7) ship.position.y = 7
   if (ship.position.y < -7) ship.position.y = -7
@@ -92,6 +97,7 @@ const wait = () => {
 }
 
 const init = () => {
+  camera.rotation.set(0, Math.PI / -2, Math.PI / -2)
   material = new THREE.MeshLambertMaterial({
     color: 0xffffff,
     side: THREE.DoubleSide
@@ -104,7 +110,8 @@ const init = () => {
     geometry.computeFaceNormals()
     geometry.computeVertexNormals()
     ship = new THREE.Mesh( geometry, material)
-    ship.scale.set( .1, .1, .1 )
+    ship.scale.set( .05, .05, .05 )
+    ship.position.x = -5
     scene.add(ship)
     shipLoaded = true
   } )
@@ -115,9 +122,13 @@ const init = () => {
   texture.repeat.set( 4, 4 )
   let spaceMaterial = new THREE.MeshBasicMaterial({map: texture})
   let plane = new THREE.CylinderGeometry(10, 10, 40, 64, 1)
-  space = new THREE.Mesh(plane, spaceMaterial)
-  space.position.set(0, 0, -11)
-  scene.add(space)
+  spaceBottom = new THREE.Mesh(plane, spaceMaterial)
+  spaceBottom.position.set(0, 0, -10.5)
+  scene.add(spaceBottom)
+
+  spaceTop = new THREE.Mesh(plane, spaceMaterial)
+  spaceTop.position.set(0, 0, 10.5)
+  scene.add(spaceTop)
 }
 
 init()
