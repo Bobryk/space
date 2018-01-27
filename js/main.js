@@ -16,42 +16,82 @@ let material
 let geometry
 let object
 let ship
+let space
+let shipLoaded = false
 
 const light = new THREE.PointLight(0xffffff, 1)
 light.position.set(0, 0, 5)
 
 scene.add(light)
 
-camera.position.set(0, -10, 10)
-camera.lookAt(scene.position)
+// controls
 
-material = new THREE.MeshLambertMaterial({
-  color: 0xffffff,
-  side: THREE.DoubleSide
-})
+// Keyboard Controls
+const keyboard = {
+  w: false,
+  a: false,
+  s: false,
+  d: false
+}
 
-const loader = new THREE.ObjectLoader()
+const keyEvent = event => {
+  isPressed = event.type === "keydown"
+  switch (event.code) {
+    case "KeyW":
+      keyboard.w = isPressed
+      break
+    case "KeyA":
+      keyboard.a = isPressed
+      break
+    case "KeyS":
+      keyboard.s = isPressed
+      break
+    case "KeyD":
+      keyboard.d = isPressed
+      break
+  }
+}
 
-loader.load( "./js/SpaceShip.json", object => {
-  console.log(object)
-  let geometry = object.children[0].geometry
-  geometry.computeFaceNormals()
-  geometry.computeVertexNormals()
-  ship = new THREE.Mesh( geometry, material)
-  ship.scale.set( .1, .1, .1 )
-  scene.add(ship)
-} )
+this.addEventListener("keydown", keyEvent)
+this.addEventListener("keyup", keyEvent)
 
 const render = () => {
   requestAnimationFrame(render)
+
+  camera.position.set(ship.position.x, ship.position.y, ship.position.z + 10)
+  camera.lookAt(ship.position)
   renderer.render(scene, camera)
 }
 
-const init = () => {
-  geometry = new THREE.PlaneGeometry( 5, 5, 32 );
-
-  object = new THREE.Mesh(geometry, material)
-  scene.add(object)
+const wait = () => {
+  shipLoaded ? requestAnimationFrame(render) : requestAnimationFrame(wait)
 }
+
+const init = () => {
+  material = new THREE.MeshLambertMaterial({
+    color: 0xffffff,
+    side: THREE.DoubleSide
+  })
+
+  const loader = new THREE.ObjectLoader()
+
+  loader.load( "./js/SpaceShip.json", object => {
+    let geometry = object.children[0].geometry
+    geometry.computeFaceNormals()
+    geometry.computeVertexNormals()
+    ship = new THREE.Mesh( geometry, material)
+    ship.scale.set( .1, .1, .1 )
+    scene.add(ship)
+    shipLoaded = true
+  } )
+
+  texture = THREE.ImageUtils.loadTexture('space.png')
+  let spaceMaterial = new THREE.MeshBasicMaterial({map: texture})
+  let plane = new THREE.PlaneGeometry(20, 20)
+  space = new THREE.Mesh(plane, spaceMaterial)
+  space.position.set(0, 0, -1)
+  scene.add(space)
+}
+
 init()
-render()
+wait()
