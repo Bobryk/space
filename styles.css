@@ -51,6 +51,15 @@ p {
   width: 500px
 }
 
+#scores {
+  display: block;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: #fff;
+  font-size: 2em;
+}
+
 button {
   background-color: #7d9ffa;
   border: none;

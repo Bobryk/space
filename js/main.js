@@ -15,9 +15,12 @@ window.onresize = event => {
 let material, geometry, object, ship, spaceBottom, spaceTop
 let shipLoaded = false
 let owens = []
+let speed = 0.00
+let kills = 0
 let laser = document.getElementById("sound")
 let wow = document.getElementById("wow")
 let music = document.getElementById("music")
+let score = document.getElementById("scores")
 
 const light = new THREE.PointLight(0xffffff, 1)
 light.position.set(-10, 0, 2)
@@ -59,7 +62,7 @@ const render = () => {
   }
 
   if (keyboard.space && (laser.ended || laser.currentTime == 0)) {
-    laser.volume = 0.7
+    laser.volume = 0.4
     laser.play()
     killOwens()
   }
@@ -90,11 +93,14 @@ const killOwens = () => {
       owens.splice(index, 1)
       scene.remove(owen)
       killed = true
+      kills += 1
+      score.innerHTML = "Owens Wasted: " + kills
     }
   })
 
   if (killed) {
     wow.pause()
+    wow.volume = 1
     wow.currentTime = 0
     wow.play()
   }
@@ -118,8 +124,10 @@ const addOwen = () => {
 const moveShip = () => {
   let notMoving = (keyboard.a && keyboard.d) || (!keyboard.a && !keyboard.d)
 
-  if (!notMoving) {
-    ship.position.y += keyboard.a ? 0.1 : -0.1
+  let increment = 0.01
+
+  if (!notMoving && Math.abs(speed) <= 0.1) {
+    speed += keyboard.a ? increment : -increment
 
     if (Math.abs(ship.rotation.x) <= 0.6) {
       ship.rotation.x -= keyboard.a ? 0.1 : -0.1
@@ -131,6 +139,13 @@ const moveShip = () => {
   if (notMoving && ship.rotation.x != 0) {
     ship.rotation.x += ship.rotation.x > 0 ? -0.1 : 0.1
   }
+
+  if (notMoving) {
+    speed -= speed > 0 ? increment : -increment
+  }
+
+  if (speed < 0.0001 && speed > 0.0001) speed = 0.00
+  ship.position.y += speed
 
   if (ship.position.y > 7) ship.position.y = 7
   if (ship.position.y < -7) ship.position.y = -7
@@ -176,7 +191,7 @@ const init = () => {
   spaceTop.position.set(0, 0, 10.5)
   scene.add(spaceTop)
   music.loop = true
-  music.volume = 0.7
+  music.volume = 0.3
   music.play()
 }
 
