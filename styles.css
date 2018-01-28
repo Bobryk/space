@@ -37,18 +37,16 @@ h1 {
 }
 
 p {
-  color: #f22
+  color: #f22;
 }
 
 #controls {
-  position: sticky;
-  left: 0;
-  bottom: 0;
-  z-index: 2;
+  display: block;
+  position: fixed;
+  top: 20px;
+  right: 20px;
   color: #fff;
-  margin-bottom: 20px;
-  height: 50px;
-  width: 500px
+  font-size: 2em;
 }
 
 #scores {

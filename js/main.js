@@ -17,7 +17,7 @@ let shipLoaded = false
 let owens = []
 let speed = 0.00
 let kills = 0
-let laser = document.getElementById("sound")
+let laserSound = document.getElementById("sound")
 let wow = document.getElementById("wow")
 let music = document.getElementById("music")
 let score = document.getElementById("scores")
@@ -27,7 +27,7 @@ light.position.set(-10, 0, 2)
 
 scene.add(light)
 
-const keyboard = {
+let keyboard = {
   w: false,
   a: false,
   s: false,
@@ -36,6 +36,16 @@ const keyboard = {
 }
 
 const keyEvent = event => {
+  if (event.code != "Space") {
+    keyboard = {
+      w: false,
+      a: false,
+      s: false,
+      d: false,
+      space: false
+    }
+  }
+
   isPressed = event.type === "keydown"
   switch (event.code) {
     case "KeyW": keyboard.w = isPressed; break
@@ -61,9 +71,9 @@ const render = () => {
     addOwen()
   }
 
-  if (keyboard.space && (laser.ended || laser.currentTime == 0)) {
-    laser.volume = 0.4
-    laser.play()
+  if (keyboard.space && (laserSound.ended || laserSound.currentTime == 0)) {
+    laserSound.volume = 0.4
+    laserSound.play()
     killOwens()
   }
 
